@@ -44,3 +44,48 @@ function navSubmitClick(evt) {
 }
 
 $navSubmit.on("click", navSubmitClick);
+
+/** Show favorites list on click on "favorites" */
+
+function updateFavorites(evt) {
+  console.debug("updateFavorites", evt);
+  hidePageComponents();
+  $favoriteStoriesList.empty();
+
+  if (currentUser.favorites.length === 0){
+    $favoriteStoriesList.append('No favorites added!');
+  } else {
+    // loop through all of our favorite stories and generate HTML for them
+    for (let story of currentUser.favorites) {
+      const $story = generateStoryMarkup(story);
+      $favoriteStoriesList.append($story);
+    }
+  }
+
+  $favoriteStoriesList.show();
+}
+
+$navFavorites.on("click", updateFavorites);
+
+/** Show my stories list on click on "my stories" */
+
+function updateMyStories(evt) {
+  console.debug("updateMyStories", evt);
+  hidePageComponents();
+  $myStoriesList.empty();
+
+  if (currentUser.ownStories.length === 0){
+    $myStoriesList.append('No stories added by user yet!');
+  } else {
+    // loop through all of our own stories and generate HTML for them
+    for (let story of currentUser.ownStories) {
+      const $story = generateStoryMarkup(story, true);
+      $myStoriesList.append($story);
+    }
+  }
+
+  $myStoriesList.show();
+}
+
+$navMyStories.on("click", updateMyStories);
+
