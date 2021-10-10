@@ -23,6 +23,10 @@ async function login(evt) {
 
   $loginForm.trigger("reset");
 
+  if (currentUser === null){
+    return
+  }
+
   saveUserCredentialsInLocalStorage();
   updateUIOnUserLogin();
 }
@@ -43,10 +47,16 @@ async function signup(evt) {
   // which we'll make the globally-available, logged-in user.
   currentUser = await User.signup(username, password, name);
 
+  $signupForm.trigger("reset");
+
+  if (currentUser === null){
+    return
+  }
+
   saveUserCredentialsInLocalStorage();
   updateUIOnUserLogin();
 
-  $signupForm.trigger("reset");
+
 }
 
 $signupForm.on("submit", signup);
@@ -110,6 +120,10 @@ function saveUserCredentialsInLocalStorage() {
 function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
 
+  hidePageComponents();
+
+  // re-display stories on page
+  putStoriesOnPage();
   $allStoriesList.show();
 
   updateNavOnLogin();

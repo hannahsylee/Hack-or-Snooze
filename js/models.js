@@ -159,24 +159,34 @@ class User {
    */
 
   static async signup(username, password, name) {
-    const response = await axios({
-      url: `${BASE_URL}/signup`,
-      method: "POST",
-      data: { user: { username, password, name } },
-    });
+    const message = document.getElementById('username-taken');
+    message.innerHTML = "";
 
-    let { user } = response.data
+    try {
+      const response = await axios({
+        url: `${BASE_URL}/signup`,
+        method: "POST",
+        data: { user: { username, password, name } },
+      });
+  
+      let { user } = response.data
+  
+      return new User(
+        {
+          username: user.username,
+          name: user.name,
+          createdAt: user.createdAt,
+          favorites: user.favorites,
+          ownStories: user.stories
+        },
+        response.data.token
+      );
+    } catch (err){
+      console.error("failed to create username", err);
+      message.innerHTML = "Username is taken. Try another username!";
+      return null; 
+    }
 
-    return new User(
-      {
-        username: user.username,
-        name: user.name,
-        createdAt: user.createdAt,
-        favorites: user.favorites,
-        ownStories: user.stories
-      },
-      response.data.token
-    );
   }
 
   /** Login in user with API, make User instance & return it.
@@ -186,24 +196,54 @@ class User {
    */
 
   static async login(username, password) {
-    const response = await axios({
-      url: `${BASE_URL}/login`,
-      method: "POST",
-      data: { user: { username, password } },
-    });
+    const message = document.getElementById('incorrect-credentials');
+    message.innerHTML = "";
 
-    let { user } = response.data;
+    try {
+      const response = await axios({
+        url: `${BASE_URL}/login`,
+        method: "POST",
+        data: { user: { username, password } },
+      });
+  
+      let { user } = response.data;
+  
+      return new User(
+        {
+          username: user.username,
+          name: user.name,
+          createdAt: user.createdAt,
+          favorites: user.favorites,
+          ownStories: user.stories
+        },
+        response.data.token
+      );
+      
 
-    return new User(
-      {
-        username: user.username,
-        name: user.name,
-        createdAt: user.createdAt,
-        favorites: user.favorites,
-        ownStories: user.stories
-      },
-      response.data.token
-    );
+    } catch (err){
+      console.error("login failed", err);
+      message.innerHTML = "Incorrect Credentials. Try again!";
+      return null;  
+    }
+
+    // const response = await axios({
+    //   url: `${BASE_URL}/login`,
+    //   method: "POST",
+    //   data: { user: { username, password } },
+    // });
+
+    // let { user } = response.data;
+
+    // return new User(
+    //   {
+    //     username: user.username,
+    //     name: user.name,
+    //     createdAt: user.createdAt,
+    //     favorites: user.favorites,
+    //     ownStories: user.stories
+    //   },
+    //   response.data.token
+    // );
   }
 
   /** When we already have credentials (token & username) for a user,
