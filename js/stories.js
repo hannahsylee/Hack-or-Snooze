@@ -19,7 +19,7 @@ async function getAndShowStoriesOnStart() {
  * Returns the markup for the story.
  */
 
-function generateStoryMarkup(story, deleteBtn = false) {
+function generateStoryMarkup(story, deleteBtn = false, editBtn = false) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
@@ -39,6 +39,7 @@ function generateStoryMarkup(story, deleteBtn = false) {
       <small class="story-hostname">(${hostName})</small>
       <small class="story-author">by ${story.author}</small>
       <small class="story-user">posted by ${story.username}</small>
+      ${editBtn ? editBtnHTML() : ""}
     </li>
   `);
 }
@@ -49,6 +50,13 @@ function deleteBtnHTML(){
   <span class="trash-can">
     <i class="fa fa-trash" aria-hidden="true"></i>
   </span>
+  `;
+}
+
+/** Add edit button to edit own stories. */
+function editBtnHTML(){
+  return `
+    <button id="editBtn" type="submit">edit</button>
   `;
 }
 
@@ -107,7 +115,7 @@ $storyForm.on("submit", submitStory);
 async function starFavoriteStory(evt){
   console.debug("starFavoriteStory", evt);
   let $closestLi = $(evt.target).closest("li");
-  let $favoriteId = $closestLi[0].id;
+  let $favoriteId = $closestLi.attr("id");
 
   const story = storyList.stories.find(s => s.storyId === $favoriteId);
 
@@ -131,7 +139,7 @@ $myStoriesList.on("click", ".fa-star", starFavoriteStory);
 // remove it from the DOM and let the API know its been deleted.
 
 async function deleteStory(evt){
-  console.debug("removeStoryDOM");
+  console.debug("deleteStory");
   const $closestLi = $(evt.target).closest("li");
 
   const storyId = $closestLi.attr("id");
@@ -142,3 +150,36 @@ async function deleteStory(evt){
 }
 
 $myStoriesList.on("click", ".fa-trash", deleteStory);
+
+
+async function editStory(evt) {
+
+  console.debug("editStory", evt);
+  evt.preventDefault();
+
+  // grab the author, title, and url from the story form 
+  const author = $("#edit-author-name").val();
+  const title = $("#edit-story-title").val();
+  const url = $("#edit-story-url").val();
+  
+  // add story to storyList object.
+  const story = await storyList.addStory(currentUser, {title, author, url});
+  const $story = generateStoryMarkup(story);
+
+  // add story to allStoriesList 
+  $allStoriesList.append($story);
+
+  $editForm.trigger("reset");
+
+  await updateMyStories();
+}
+
+$editForm.on("submit", editStory);
+
+
+
+
+
+
+
+

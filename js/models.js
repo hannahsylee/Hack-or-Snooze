@@ -96,11 +96,7 @@ class StoryList {
     return story;
   }
 
-    /** Adds story data to API, makes a Story instance, adds it to story list.
-   * - user - the current instance of User who will post the story
-   * - obj of {title, author, url}
-   *
-   * Returns the new Story instance
+  /** Removes story 
    */
 
   async removeStory(user, storyId) {
@@ -118,6 +114,29 @@ class StoryList {
     user.ownStories = user.ownStories.filter(s => s.storyId !== storyId);
     user.favorites = user.favorites.filter(s => s.storyId !== storyId);
   }
+
+  // async editStory(user, {title, author, url}) {
+  //   // UNIMPLEMENTED: complete this function!
+  //   // user.ownStories = user.ownStories.filter(s => s.storyId !== story.storyId);
+  //   const token = user.loginToken;
+
+  //   const newStory = {
+  //     token,
+  //     story: {
+  //       title,
+  //       author,
+  //       url
+  //     }
+  //   }
+
+  //   const response = await axios.post(`${BASE_URL}/stories`, newStory);
+
+  //   const story = new Story(response.data.story);
+
+  //   this.stories.unshift(story);
+  //   user.ownStories.unshift(story);
+  //   return story;
+  // }
 }
 
 
@@ -188,6 +207,7 @@ class User {
     }
 
   }
+
 
   /** Login in user with API, make User instance & return it.
 

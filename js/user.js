@@ -129,5 +129,13 @@ function updateUIOnUserLogin() {
   updateNavOnLogin();
 }
 
+// generate user information
+function generateUserInfo(){
+  console.debug('generateUserInfo');
+  $name.text(currentUser.name);
+  $username.text(currentUser.username);
+  $accountCreated.text(currentUser.createdAt.slice(0,10));
+}
+
 
 
