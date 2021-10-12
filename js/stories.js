@@ -3,6 +3,7 @@
 // This is the global list of the stories, an instance of StoryList
 let storyList;
 
+let editStoryId;
 /** Get and show stories when site first loads. */
 
 async function getAndShowStoriesOnStart() {
@@ -152,6 +153,32 @@ async function deleteStory(evt){
 $myStoriesList.on("click", ".fa-trash", deleteStory);
 
 
+/** Show edit form on click on "edit" */
+
+function editFormSubmit(evt) {
+  console.debug("editFormSubmit", evt);
+  // hidePageComponents();
+
+  const $closestLi = $(evt.target).closest("li");
+  editStoryId = $closestLi.attr("id");
+  // const storyId = $closestLi.attr("id");
+
+  const story = storyList.stories.find(s => s.storyId === editStoryId);
+
+  $editForm.show();
+
+  $("#edit-author-name").val(story.author);
+  $("#edit-story-title").val(story.title);
+  $("#edit-story-url").val(story.url);
+
+  // remove the story that was edited from all the arrays.
+  // storyList.removeStory(currentUser, editStoryId);
+
+}
+
+$myStoriesList.on("click", "#editBtn", editFormSubmit);
+
+
 async function editStory(evt) {
 
   console.debug("editStory", evt);
@@ -162,12 +189,14 @@ async function editStory(evt) {
   const title = $("#edit-story-title").val();
   const url = $("#edit-story-url").val();
   
-  // add story to storyList object.
-  const story = await storyList.addStory(currentUser, {title, author, url});
-  const $story = generateStoryMarkup(story);
+  // edit story to storyList object.
+  // const story = await storyList.editStory(currentUser, editStoryId, {title, author, url});
+  await storyList.editStory(currentUser, editStoryId, {title, author, url});
+  // const story = await storyList.addStory(currentUser, {title, author, url});
+  // const $story = generateStoryMarkup(story);
 
   // add story to allStoriesList 
-  $allStoriesList.append($story);
+  // $allStoriesList.append($story);
 
   $editForm.trigger("reset");
 

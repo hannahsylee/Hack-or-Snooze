@@ -115,28 +115,52 @@ class StoryList {
     user.favorites = user.favorites.filter(s => s.storyId !== storyId);
   }
 
-  // async editStory(user, {title, author, url}) {
-  //   // UNIMPLEMENTED: complete this function!
-  //   // user.ownStories = user.ownStories.filter(s => s.storyId !== story.storyId);
-  //   const token = user.loginToken;
+  async editStory(user, storyId, {title, author, url}) {
+    // UNIMPLEMENTED: complete this function!
+    // user.ownStories = user.ownStories.filter(s => s.storyId !== story.storyId);
 
-  //   const newStory = {
-  //     token,
-  //     story: {
-  //       title,
-  //       author,
-  //       url
-  //     }
-  //   }
+    // find the index of where the storyId is in the ownStories array.
 
-  //   const response = await axios.post(`${BASE_URL}/stories`, newStory);
+    const token = user.loginToken;
 
-  //   const story = new Story(response.data.story);
+    const newStory = {
+      token,
+      story: {
+        title,
+        author,
+        url
+      }
+    }
 
-  //   this.stories.unshift(story);
-  //   user.ownStories.unshift(story);
-  //   return story;
-  // }
+    const response = await axios.patch(`${BASE_URL}/stories/${storyId}`, newStory);
+
+    const story = new Story(response.data.story);
+
+    // update my own Stories list.
+    for (let i = 0; i < user.ownStories.length; i++){
+      if (user.ownStories[i].storyId === storyId){
+        user.ownStories.splice(i, 1, story);
+      }
+    }
+
+    // update all stories list.
+    for (let i = 0; i < this.stories.length; i++){
+      if (this.stories[i].storyId === storyId){
+        this.stories.splice(i, 1, story);
+      }
+    }
+
+    if (user.favorites.some(s => s.storyId === storyId)){
+      // update favorites list if favorited.
+      for (let i = 0; i < user.favorites.length; i++){
+        if (user.favorites[i].storyId === storyId){
+          user.favorites.splice(i, 1, story);
+        }
+      }
+    }
+
+    return story;
+  }
 }
 
 

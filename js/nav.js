@@ -102,28 +102,5 @@ function updateUserInfos(evt) {
 
 $navUser.on("click", updateUserInfos);
 
-/** Show edit form on click on "edit" */
-
-function editFormSubmit(evt) {
-  console.debug("editFormSubmit", evt);
-  // hidePageComponents();
-
-  const $closestLi = $(evt.target).closest("li");
-  const storyId = $closestLi.attr("id");
-
-  const story = storyList.stories.find(s => s.storyId === storyId);
-
-  $editForm.show();
-
-  $("#edit-author-name").val(story.author);
-  $("#edit-story-title").val(story.title);
-  $("#edit-story-url").val(story.url);
-
-  // remove the story that was edited from all the arrays.
-  storyList.removeStory(currentUser, storyId);
-
-}
-
-$myStoriesList.on("click", "#editBtn", editFormSubmit);
 
 
